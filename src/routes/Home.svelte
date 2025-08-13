@@ -1,68 +1,93 @@
 <script lang="ts">
-import {
-	allComponents,
-	provideFluentDesignSystem,
-} from "@fluentui/web-components";
-import { onMount } from "svelte";
-provideFluentDesignSystem().register(allComponents);
-import HeroList from "../components/HeroList.svelte";
-import Navbar from "../components/Navbar.svelte";
-import Progress from "../components/Progress.svelte";
+  import { onMount } from "svelte";
+  import { authService, type UserInfo } from "../auth";
+  import {
+    provideFluentDesignSystem,
+    allComponents,
+  } from "@fluentui/web-components";
 
-let isOfficeInitialized = false;
-onMount(async () => {
-	const Office = window.Office;
-	await Office.onReady();
-	isOfficeInitialized = true;
-});
+  provideFluentDesignSystem().register(allComponents);
 
-const click = async () => {
-	return Word.run(async (context) => {
-		/**
-		 * Insert your Word code here
-		 */
+  let isOfficeInitialized = false;
+  let currentUser: UserInfo | null = null;
+  let isLoading = true;
+  let errorMessage = "";
 
-		// insert a paragraph at the end of the document.
-		const paragraph = context.document.body.insertParagraph(
-			"Hello World",
-			Word.InsertLocation.end,
-		);
+  // This function is the bridge between Svelte and the static elements in taskpane.html
+  function updateDOM(authResult: 'success' | 'fail' | 'pending' | 'initial' = 'initial'): void {
+    const nameBox = document.getElementById("user-name-box");
+    const emailBox = document.getElementById("user-email-box");
+    const statusIcon = document.getElementById("status-icon");
+    const errorContainer = document.getElementById("error-message");
 
-		// change the paragraph color to blue.
-		paragraph.font.color = "blue";
+    // Update textboxes
+    if (nameBox) nameBox.textContent = currentUser?.user || "";
+    if (emailBox) emailBox.textContent = currentUser?.email || "";
 
-		await context.sync();
-	});
-};
-</script>
-    
-{#if !isOfficeInitialized}
-  <Progress
-    title="Contoso Task Pane Add-in"
-    message="Please sideload your addin to see app body."
-  />
-{:else}
-  <main class="flex flex-col items-center justify-center h-screen">
-    <HeroList />
-    <div>
-      <div class="text-blue-500 mt-4">
-        Modify the source files, then click <b>Run</b>.
-      </div>
-    </div>
-    <div class="run-button">
-        <fluent-button appearance="accent" onclick={click}>Run</fluent-button>
-    </div>
-  </main>
-{/if}
+    // Update status icon
+    if (statusIcon) {
+      statusIcon.classList.remove('bg-gray-500', 'bg-green-500', 'bg-red-500', 'bg-yellow-500');
+      if (authResult === 'success') {
+        statusIcon.classList.add('bg-green-500');
+      } else if (authResult === 'fail') {
+        statusIcon.classList.add('bg-red-500');
+      } else if (authResult === 'pending') {
+         statusIcon.classList.add('bg-yellow-500');
+      } else {
+        statusIcon.classList.add('bg-gray-500');
+      }
+    }
 
-<style>
-  :global(.run-button) {
-    margin: 20px !important;
-    text-align: center;
+    // Update error message
+    if (errorContainer) {
+      errorContainer.textContent = errorMessage;
+      errorContainer.style.display = errorMessage ? "block" : "none";
+    }
   }
 
-  :global(body) {
-    background-color: var(--fds-solid-background-base);
-    color: var(--fds-text-primary);
+  async function handleTestAuth(): Promise<void> {
+    isLoading = true;
+    errorMessage = "";
+    currentUser = null;
+    updateDOM('pending');
+
+    try {
+      currentUser = await authService.authenticateWithSSO();
+      updateDOM('success');
+    } catch (error) {
+      console.error("Authentication failed:", error);
+      errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+      updateDOM('fail');
+      setTimeout(() => {
+        errorMessage = "";
+        if (errorContainer) errorContainer.style.display = "none";
+      }, 5000);
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  onMount(async () => {
+    await Office.onReady();
+    isOfficeInitialized = true;
+
+    // Wire up event listener for the new test button
+    document.getElementById("test-sso-button")?.addEventListener("click", handleTestAuth);
+
+    // Initial UI state
+    updateDOM('initial');
+  });
+</script>
+
+<!-- This Svelte component is now mostly for logic. The UI is in taskpane.html -->
+<!-- We can still have Svelte-controlled elements here if we want. -->
+
+<style>
+  :global(.user-info) {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    text-align: left;
   }
 </style>

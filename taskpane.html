@@ -14,7 +14,29 @@
 </head>
 
 <body class="ms-font-m ms-welcome">
-  <div id="app"></div>
+  <main id="app-body" class="ms-welcome__main flex flex-col items-center justify-center h-screen p-4 text-center">
+    <div class="w-full max-w-xs">
+      <h2 class="ms-font-xl ms-fontWeight-semilight ms-fontColor-neutralPrimary ms-u-slideUpIn20 mb-4">SSO Test</h2>
+
+      <fluent-button id="test-sso-button" appearance="accent" class="w-full mb-6">Test SSO</fluent-button>
+
+      <div class="text-left">
+        <label for="user-name-box" class="block text-sm font-medium text-gray-400">User Name</label>
+        <div id="user-name-box" class="mt-1 w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-white h-10"></div>
+
+        <label for="user-email-box" class="block text-sm font-medium text-gray-400 mt-4">Email</label>
+        <div id="user-email-box" class="mt-1 w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-white h-10"></div>
+
+        <div class="flex items-center mt-4">
+          <label class="block text-sm font-medium text-gray-400">Status</label>
+          <span id="status-icon" class="ml-2 w-5 h-5 rounded-full bg-gray-500"></span>
+        </div>
+      </div>
+
+      <div id="error-message" style="display: none;" class="text-red-500 mt-4 p-2 bg-red-100 rounded-md w-full"></div>
+    </div>
+  </main>
+  <div id="app" style="display: none;"></div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 

@@ -23,6 +23,16 @@
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <WebApplicationInfo>
+      <Id>{{CLIENT_ID}}</Id>
+      <Resource>api://{{CLIENT_ID}}</Resource>
+      <Scopes>
+        <Scope>access_as_user</Scope>
+        <Scope>openid</Scope>
+        <Scope>profile</Scope>
+        <Scope>User.Read</Scope>
+      </Scopes>
+    </WebApplicationInfo>
     <Hosts>
       <Host xsi:type="Notebook">
         <DesktopFormFactor>

@@ -14,7 +14,21 @@
 </head>
 
 <body class="ms-font-m ms-welcome">
-  <div id="app"></div>
+  <main id="app-body" class="ms-welcome__main flex flex-col items-center justify-center h-screen p-4 text-center">
+    <div id="auth-container" class="w-full">
+      <h2 class="ms-font-xl ms-fontWeight-semilight ms-fontColor-neutralPrimary ms-u-slideUpIn20 mb-4">Welcome</h2>
+      <p class="ms-font-l mb-6">Please sign in to continue.</p>
+      <fluent-button id="auth-button" appearance="accent">Sign In</fluent-button>
+    </div>
+    <div id="user-container" style="display: none;" class="w-full">
+        <div id="user-display" class="mb-4"></div>
+        <div id="user-menu">
+            <fluent-button id="sign-out-button">Sign Out</fluent-button>
+        </div>
+    </div>
+    <div id="error-message" style="display: none;" class="text-red-600 mt-4 p-2 bg-red-100 rounded-md w-full"></div>
+  </main>
+  <div id="app" style="display: none;"></div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 

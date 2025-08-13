@@ -1,68 +1,104 @@
 <script lang="ts">
-import {
-	allComponents,
-	provideFluentDesignSystem,
-} from "@fluentui/web-components";
-import { onMount } from "svelte";
-provideFluentDesignSystem().register(allComponents);
-import HeroList from "../components/HeroList.svelte";
-import Navbar from "../components/Navbar.svelte";
-import Progress from "../components/Progress.svelte";
+  import { onMount } from "svelte";
+  import { authService, type UserInfo } from "../auth";
+  import {
+    provideFluentDesignSystem,
+    allComponents,
+  } from "@fluentui/web-components";
 
-let isOfficeInitialized = false;
-onMount(async () => {
-	const Office = window.Office;
-	await Office.onReady();
-	isOfficeInitialized = true;
-});
+  provideFluentDesignSystem().register(allComponents);
 
-const click = async () => {
-	return Word.run(async (context) => {
-		/**
-		 * Insert your Word code here
-		 */
+  let isOfficeInitialized = false;
+  let currentUser: UserInfo | null = null;
+  let isLoading = true;
+  let errorMessage = "";
 
-		// insert a paragraph at the end of the document.
-		const paragraph = context.document.body.insertParagraph(
-			"Hello World",
-			Word.InsertLocation.end,
-		);
+  // This function is the bridge between Svelte and the static elements in taskpane.html
+  function updateDOM(): void {
+    const authContainer = document.getElementById("auth-container");
+    const userContainer = document.getElementById("user-container");
+    const userDisplay = document.getElementById("user-display");
+    const errorContainer = document.getElementById("error-message");
 
-		// change the paragraph color to blue.
-		paragraph.font.color = "blue";
+    if (isLoading) {
+      // You might want a loading indicator
+    }
 
-		await context.sync();
-	});
-};
-</script>
-    
-{#if !isOfficeInitialized}
-  <Progress
-    title="Contoso Task Pane Add-in"
-    message="Please sideload your addin to see app body."
-  />
-{:else}
-  <main class="flex flex-col items-center justify-center h-screen">
-    <HeroList />
-    <div>
-      <div class="text-blue-500 mt-4">
-        Modify the source files, then click <b>Run</b>.
-      </div>
-    </div>
-    <div class="run-button">
-        <fluent-button appearance="accent" onclick={click}>Run</fluent-button>
-    </div>
-  </main>
-{/if}
+    if (currentUser) {
+      if (authContainer) authContainer.style.display = "none";
+      if (userContainer) userContainer.style.display = "block";
+      if (userDisplay) {
+        userDisplay.innerHTML = `
+          <div class="user-info">
+            <div class="ms-fontSize-xl ms-fontWeight-semibold">${currentUser.user || 'Unknown User'}</div>
+            <div class="ms-fontSize-m">${currentUser.email || 'No email available'}</div>
+          </div>
+        `;
+      }
+    } else {
+      if (authContainer) authContainer.style.display = "block";
+      if (userContainer) userContainer.style.display = "none";
+    }
 
-<style>
-  :global(.run-button) {
-    margin: 20px !important;
-    text-align: center;
+    if (errorContainer) {
+      errorContainer.textContent = errorMessage;
+      errorContainer.style.display = errorMessage ? "block" : "none";
+    }
   }
 
-  :global(body) {
-    background-color: var(--fds-solid-background-base);
-    color: var(--fds-text-primary);
+  async function handleAuth(): Promise<void> {
+    isLoading = true;
+    errorMessage = "";
+    updateDOM();
+    try {
+      currentUser = await authService.authenticateWithSSO();
+    } catch (error) {
+      console.error("Authentication failed:", error);
+      errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+      setTimeout(() => { errorMessage = "" }, 5000);
+    } finally {
+      isLoading = false;
+      updateDOM();
+    }
+  }
+
+  async function handleSignOut(): Promise<void> {
+    await authService.signOut();
+    currentUser = null;
+    updateDOM();
+  }
+
+  async function attemptAutoAuth(): Promise<void> {
+    try {
+      currentUser = await authService.authenticateWithSSO();
+    } catch (error) {
+      console.log("Auto-authentication not available:", error);
+    }
+    isLoading = false;
+    updateDOM();
+  }
+
+  onMount(async () => {
+    await Office.onReady();
+    isOfficeInitialized = true;
+
+    // Wire up event listeners
+    document.getElementById("auth-button")?.addEventListener("click", handleAuth);
+    document.getElementById("sign-out-button")?.addEventListener("click", handleSignOut);
+
+    await attemptAutoAuth();
+  });
+</script>
+
+<!-- This Svelte component is now mostly for logic. The UI is in taskpane.html -->
+<!-- We can still have Svelte-controlled elements here if we want. -->
+
+<style>
+  :global(.user-info) {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    text-align: left;
   }
 </style>

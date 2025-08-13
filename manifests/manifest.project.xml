@@ -9,17 +9,17 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Imperial AI"/>
   <Description DefaultValue="Imperial AI Office Add-in."/>
-  <IconUrl DefaultValue="https://athena-office.imperialai.ai/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://athena-office.imperialai.ai/assets/icon-64.png"/>
+  <IconUrl DefaultValue="https://athena-office-full.imperialai.ai/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://athena-office-full.imperialai.ai/assets/icon-64.png"/>
   <SupportUrl DefaultValue="https://www.imperialai.ai/help"/>
   <AppDomains>
-    <AppDomain>https://athena-office.imperialai.ai</AppDomain>
+    <AppDomain>https://athena-office-full.imperialai.ai</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Project"/>
   </Hosts>
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://athena-office.imperialai.ai/taskpane.html"/>
+    <SourceLocation DefaultValue="https://athena-office-full.imperialai.ai/taskpane.html"/>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
 </OfficeApp>

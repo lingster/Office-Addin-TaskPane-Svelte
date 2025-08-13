@@ -3,7 +3,7 @@
     "sourceType": "module",
     "ecmaVersion": 8
   },
-  "plugins": ["office-addins", "svelte3"],
+  "plugins": ["office-addins", "svelte"],
   "env": {
     "browser": true
   },

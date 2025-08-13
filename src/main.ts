@@ -1,8 +1,14 @@
 import App from "./App.svelte";
 import "./app.css";
 
+const target = document.getElementById("app");
+
+if (!target) {
+  throw new Error("Could not find app target");
+}
+
 const app = new App({
-	target: document.getElementById("app"),
+	target,
 });
 
 export default app;

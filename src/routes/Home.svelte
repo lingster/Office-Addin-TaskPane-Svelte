@@ -1,3 +1,5 @@
+/// <reference types="@microsoft/office-js" />
+
 <script lang="ts">
 import {
 	allComponents,
@@ -8,6 +10,7 @@ provideFluentDesignSystem().register(allComponents);
 import HeroList from "../components/HeroList.svelte";
 import Navbar from "../components/Navbar.svelte";
 import Progress from "../components/Progress.svelte";
+import { authService } from "../auth";
 
 let isOfficeInitialized = false;
 onMount(async () => {
@@ -34,6 +37,29 @@ const click = async () => {
 		await context.sync();
 	});
 };
+
+const handleAuth = async () => {
+  try {
+    await authService.authenticateWithSSO()
+    console.log("Authentication successful")
+  } catch (error) {
+    console.error("Authentication failed:", error)
+    showErrorMessage(error instanceof Error ? error.message : "Authentication failed")
+  }
+}
+
+function showErrorMessage(message: string): void {
+  const errorDiv = document.getElementById("error-message")
+  if (errorDiv) {
+    errorDiv.textContent = message
+    errorDiv.style.display = "block"
+
+    // Hide error after 5 seconds
+    setTimeout(() => {
+      errorDiv.style.display = "none"
+    }, 5000)
+  }
+}
 </script>
     
 {#if !isOfficeInitialized}
@@ -43,6 +69,8 @@ const click = async () => {
   />
 {:else}
   <main class="flex flex-col items-center justify-center h-screen">
+    <div id="user-display"></div>
+    <div id="error-message" style="display: none; color: red; margin-bottom: 10px;"></div>
     <HeroList />
     <div>
       <div class="text-blue-500 mt-4">
@@ -51,6 +79,7 @@ const click = async () => {
     </div>
     <div class="run-button">
         <fluent-button appearance="accent" onclick={click}>Run</fluent-button>
+        <fluent-button appearance="accent" id="auth-button" onclick={handleAuth}>Test</fluent-button>
     </div>
   </main>
 {/if}

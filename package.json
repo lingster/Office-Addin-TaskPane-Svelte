@@ -25,7 +25,8 @@
 		"start:project": "office-addin-debugging start ./manifests/manifest.project.xml",
 		"start:word": "office-addin-debugging start ./manifests/manifest.word.xml",
 		"stop": "office-addin-debugging stop ./manifests/manifest.xml",
-		"validate": "office-addin-manifest validate ./manifests/manifest.xml"
+		"validate": "office-addin-manifest validate ./manifests/manifest.xml",
+		"build:deploy": "vite build --config vite.config.webonly.ts"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.24.5",

@@ -14,79 +14,68 @@
   let errorMessage = "";
 
   // This function is the bridge between Svelte and the static elements in taskpane.html
-  function updateDOM(): void {
-    const authContainer = document.getElementById("auth-container");
-    const userContainer = document.getElementById("user-container");
-    const userDisplay = document.getElementById("user-display");
+  function updateDOM(authResult: 'success' | 'fail' | 'pending' | 'initial' = 'initial'): void {
+    const nameBox = document.getElementById("user-name-box");
+    const emailBox = document.getElementById("user-email-box");
+    const statusIcon = document.getElementById("status-icon");
     const errorContainer = document.getElementById("error-message");
 
-    if (isLoading) {
-      // You might want a loading indicator
-    }
+    // Update textboxes
+    if (nameBox) nameBox.textContent = currentUser?.user || "";
+    if (emailBox) emailBox.textContent = currentUser?.email || "";
 
-    if (currentUser) {
-      if (authContainer) authContainer.style.display = "none";
-      if (userContainer) userContainer.style.display = "block";
-      if (userDisplay) {
-        userDisplay.innerHTML = `
-          <div class="user-info">
-            <div class="ms-fontSize-xl ms-fontWeight-semibold">${currentUser.user || 'Unknown User'}</div>
-            <div class="ms-fontSize-m">${currentUser.email || 'No email available'}</div>
-          </div>
-        `;
+    // Update status icon
+    if (statusIcon) {
+      statusIcon.classList.remove('bg-gray-500', 'bg-green-500', 'bg-red-500', 'bg-yellow-500');
+      if (authResult === 'success') {
+        statusIcon.classList.add('bg-green-500');
+      } else if (authResult === 'fail') {
+        statusIcon.classList.add('bg-red-500');
+      } else if (authResult === 'pending') {
+         statusIcon.classList.add('bg-yellow-500');
+      } else {
+        statusIcon.classList.add('bg-gray-500');
       }
-    } else {
-      if (authContainer) authContainer.style.display = "block";
-      if (userContainer) userContainer.style.display = "none";
     }
 
+    // Update error message
     if (errorContainer) {
       errorContainer.textContent = errorMessage;
       errorContainer.style.display = errorMessage ? "block" : "none";
     }
   }
 
-  async function handleAuth(): Promise<void> {
+  async function handleTestAuth(): Promise<void> {
     isLoading = true;
     errorMessage = "";
-    updateDOM();
+    currentUser = null;
+    updateDOM('pending');
+
     try {
       currentUser = await authService.authenticateWithSSO();
+      updateDOM('success');
     } catch (error) {
       console.error("Authentication failed:", error);
       errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-      setTimeout(() => { errorMessage = "" }, 5000);
+      updateDOM('fail');
+      setTimeout(() => {
+        errorMessage = "";
+        if (errorContainer) errorContainer.style.display = "none";
+      }, 5000);
     } finally {
       isLoading = false;
-      updateDOM();
     }
-  }
-
-  async function handleSignOut(): Promise<void> {
-    await authService.signOut();
-    currentUser = null;
-    updateDOM();
-  }
-
-  async function attemptAutoAuth(): Promise<void> {
-    try {
-      currentUser = await authService.authenticateWithSSO();
-    } catch (error) {
-      console.log("Auto-authentication not available:", error);
-    }
-    isLoading = false;
-    updateDOM();
   }
 
   onMount(async () => {
     await Office.onReady();
     isOfficeInitialized = true;
 
-    // Wire up event listeners
-    document.getElementById("auth-button")?.addEventListener("click", handleAuth);
-    document.getElementById("sign-out-button")?.addEventListener("click", handleSignOut);
+    // Wire up event listener for the new test button
+    document.getElementById("test-sso-button")?.addEventListener("click", handleTestAuth);
 
-    await attemptAutoAuth();
+    // Initial UI state
+    updateDOM('initial');
   });
 </script>
 

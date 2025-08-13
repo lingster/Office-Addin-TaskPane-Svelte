@@ -4,11 +4,11 @@
   xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
   xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
   <Id>05c2e1c9-3e1d-406e-9a91-e9ac64854143</Id>
-  <Version>1.0.0.1</Version>
+  <Version>1.0.0.2</Version>
   <ProviderName>Imperial AI Limited</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Imperial AI"/>
-  <Description DefaultValue="Imperial AI Office Add-in."/>
+  <DisplayName DefaultValue="Athena Office Addin"/>
+  <Description DefaultValue="Athena AI Office Add-in."/>
   <IconUrl DefaultValue="https://athena-office-full.imperialai.ai/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://athena-office-full.imperialai.ai/assets/icon-64.png"/>
   <SupportUrl DefaultValue="https://www.imperialai.ai/help"/>

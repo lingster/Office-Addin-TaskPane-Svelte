@@ -20,6 +20,7 @@
     <Host Name="Notebook"/>
     <Host Name="Presentation"/>
     <Host Name="Workbook"/>
+    <Host Name="Mailbox"/>
   </Hosts>
   <DefaultSettings>
     <SourceLocation DefaultValue="https://athena-office.imperialai.ai/taskpane.html"/>

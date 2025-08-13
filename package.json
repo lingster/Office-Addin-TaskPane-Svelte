@@ -24,6 +24,7 @@
 		"start:powerpoint": "office-addin-debugging start ./manifests/manifest.powerpoint.xml",
 		"start:project": "office-addin-debugging start ./manifests/manifest.project.xml",
 		"start:word": "office-addin-debugging start ./manifests/manifest.word.xml",
+		"start:outlook": "office-addin-debugging start ./manifests/manifest.outlook.xml",
 		"stop": "office-addin-debugging stop ./manifests/manifest.xml",
 		"validate": "office-addin-manifest validate ./manifests/manifest.xml",
 		"build:deploy": "vite build --config vite.config.webonly.ts"

@@ -1,5 +1,4 @@
 <script lang="ts">
-import { link } from "svelte-spa-router";
 import { location } from "svelte-spa-router";
 </script>
 

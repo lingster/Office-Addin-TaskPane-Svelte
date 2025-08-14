@@ -1,38 +1,47 @@
 {
-	"extends": "@tsconfig/svelte/tsconfig.json",
-	"compilerOptions": {
-		"allowUnusedLabels": false,
-		"emitDecoratorMetadata": true,
-		"esModuleInterop": true,
-		"experimentalDecorators": true,
-		"resolveJsonModule": true,
-		"module": "CommonJS",
-		"moduleResolution": "node",
-		"noImplicitReturns": true,
-		"noUnusedParameters": true,
-		"outDir": "dist",
-		"removeComments": false,
-		"sourceMap": true,
-		"target": "es5",
-		"lib": ["es7", "dom"],
-		"pretty": true,
-		"typeRoots": ["node_modules/@types"],
-		/**
-		 * Typecheck JS in `.svelte` and `.js` files by default.
-		 * Disable checkJs if you'd like to use dynamic types in JS.
-		 * Note that setting allowJs false does not prevent the use
-		 * of JS in `.svelte` files.
-		 */
-		"allowJs": true,
-		"checkJs": true,
-		"isolatedModules": true
-	},
-	"include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
-	"references": [{ "path": "./tsconfig.node.json" }],
-	"exclude": ["node_modules"],
-	"compileOnSave": false,
-	"buildOnSave": false,
-	"ts-node": {
-		"files": true
-	}
+  "extends": "@tsconfig/svelte/tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": true,
+    "useDefineForClassFields": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "types": [
+      "vite/client",
+      "office-js",
+      "node"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "$lib/*": ["src/lib/*"],
+      "$components/*": ["src/components/*"],
+      "$stores/*": ["src/stores/*"],
+      "$types/*": ["src/types/*"]
+    }
+  },
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.svelte"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
+  ],
+  "references": [
+    { "path": "./tsconfig.node.json" }
+  ]
 }

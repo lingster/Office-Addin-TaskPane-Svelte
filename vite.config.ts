@@ -43,6 +43,9 @@ export default defineConfig({
 			],
 		}),
 	],
+  define: {
+    global: 'globalThis',
+  },
 	server: {
 		https: await getHttpsOptions(),
 		port: Number.parseInt(process.env.server_port) || 3000,
